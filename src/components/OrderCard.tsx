@@ -1,76 +1,111 @@
 import { STATUS_LABELS, formatAmount, openLocation, type OrderStatus } from '@/utils/constants';
-import { MapPin, Phone } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 interface OrderCardProps {
   order: {
-    id: string;
-    order_number: number;
-    pickup_address: string;
-    pickup_lat?: number | null;
-    pickup_lng?: number | null;
-    delivery_address: string;
-    delivery_lat?: number | null;
-    delivery_lng?: number | null;
-    delivery_type: string;
-    amount: number;
-    driver_amount?: number | null;
-    status: string;
-    client_phone?: string;
-    created_at: string;
+    id: string; order_number: number; pickup_address: string;
+    pickup_lat?: number | null; pickup_lng?: number | null;
+    delivery_address: string; delivery_lat?: number | null; delivery_lng?: number | null;
+    delivery_type: string; amount: number; driver_amount?: number | null;
+    status: string; client_phone?: string; created_at: string;
   };
   showChat?: boolean;
   showDriverAmount?: boolean;
   onClick?: () => void;
 }
 
-export const OrderCard = ({ order, showChat = true, showDriverAmount = false, onClick }: OrderCardProps) => {
+const STATUS_COLORS: Record<string, { bg: string; text: string; dot: string }> = {
+  pending:         { bg: 'hsl(220 20% 100% / 0.07)', text: 'hsl(220 15% 70%)', dot: 'hsl(220 15% 60%)' },
+  driver_assigned: { bg: 'hsl(22 100% 55% / 0.12)',  text: 'hsl(22 100% 65%)', dot: 'hsl(22 100% 55%)' },
+  arrived_pickup:  { bg: 'hsl(38 95% 55% / 0.12)',   text: 'hsl(38 95% 65%)',  dot: 'hsl(38 95% 55%)' },
+  loaded:          { bg: 'hsl(38 95% 55% / 0.12)',   text: 'hsl(38 95% 65%)',  dot: 'hsl(38 95% 55%)' },
+  in_transit:      { bg: 'hsl(22 100% 55% / 0.12)',  text: 'hsl(22 100% 65%)', dot: 'hsl(22 100% 55%)' },
+  delivered:       { bg: 'hsl(152 76% 42% / 0.12)',  text: 'hsl(152 76% 55%)', dot: 'hsl(152 76% 45%)' },
+  cancelled:       { bg: 'hsl(0 84% 60% / 0.10)',    text: 'hsl(0 84% 65%)',   dot: 'hsl(0 84% 60%)' },
+};
+
+export const OrderCard = ({ order, showDriverAmount = false, onClick }: OrderCardProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const statusKey = order.status as OrderStatus;
   const statusInfo = STATUS_LABELS[statusKey] || STATUS_LABELS.pending;
   const statusLabel = t(`status.${statusKey}`) || statusInfo.label;
+  const statusColor = STATUS_COLORS[statusKey] || STATUS_COLORS.pending;
   const displayAmount = showDriverAmount
     ? (order.driver_amount ?? (Number(order.amount) - 1))
     : order.amount;
 
+  const isActive = !['delivered', 'cancelled'].includes(order.status);
+
   return (
     <div
-      className="bg-card rounded-2xl border border-border p-4 space-y-3 cursor-pointer active:scale-[0.98] transition-transform"
+      className="order-card"
+      style={isActive ? { borderColor: 'hsl(22 100% 55% / 0.2)', boxShadow: '0 4px 24px hsl(22 100% 55% / 0.08)' } : {}}
       onClick={() => onClick ? onClick() : navigate(`/order/${order.id}`)}
     >
-      <div className="flex items-center justify-between">
-        <span className="font-semibold text-sm">🧾 {t('nav.orders')} #{order.order_number}</span>
-        <span className={`status-badge ${statusInfo.color}`}>{statusLabel}</span>
+      {/* رأس البطاقة */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground font-medium">طلب</span>
+          <span className="font-black text-base" style={{ color: 'hsl(22 100% 62%)' }}>
+            #{order.order_number}
+          </span>
+        </div>
+        {/* شارة الحالة */}
+        <div
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold"
+          style={{ background: statusColor.bg, color: statusColor.text }}
+        >
+          <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: statusColor.dot }} />
+          {statusLabel}
+        </div>
       </div>
 
-      <div className="space-y-2 text-sm">
-        <div className="flex items-start gap-2">
-          <MapPin className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-          <div>
-            <span className="text-muted-foreground text-xs">{t('common.from')}</span>
+      {/* خط فاصل */}
+      <div className="h-px mb-3" style={{ background: 'hsl(20 20% 100% / 0.05)' }} />
+
+      {/* العناوين */}
+      <div className="space-y-2.5">
+        <div className="flex items-start gap-3">
+          <div className="mt-0.5 flex-shrink-0">
+            <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: 'hsl(22 100% 55% / 0.15)' }}>
+              <MapPin size={13} style={{ color: 'hsl(22 100% 60%)' }} />
+            </div>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] text-muted-foreground mb-0.5">{t('common.from')}</p>
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                if (order.pickup_lat && order.pickup_lng) openLocation(order.pickup_lat, order.pickup_lng);
-              }}
-              className="block text-primary text-xs underline"
+              onClick={e => { e.stopPropagation(); if (order.pickup_lat && order.pickup_lng) openLocation(order.pickup_lat, order.pickup_lng); }}
+              className="text-xs text-foreground/90 text-right leading-relaxed line-clamp-1 hover:text-primary transition-colors w-full"
             >
               {order.pickup_address}
             </button>
           </div>
         </div>
-        <div className="flex items-start gap-2">
-          <MapPin className="w-4 h-4 text-success mt-0.5 shrink-0" />
-          <div>
-            <span className="text-muted-foreground text-xs">{t('common.to')}</span>
+
+        {/* خط اتصال */}
+        <div className="flex items-start gap-3">
+          <div className="flex flex-col items-center" style={{ marginRight: '9px', width: '6px', gap: '2px', marginTop: '-6px' }}>
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="w-0.5 h-1 rounded-full" style={{ background: 'hsl(152 76% 45% / 0.4)' }} />
+            ))}
+          </div>
+          <div />
+        </div>
+
+        <div className="flex items-start gap-3">
+          <div className="mt-0.5 flex-shrink-0">
+            <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: 'hsl(152 76% 42% / 0.15)' }}>
+              <MapPin size={13} style={{ color: 'hsl(152 76% 50%)' }} />
+            </div>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] text-muted-foreground mb-0.5">{t('common.to')}</p>
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                if (order.delivery_lat && order.delivery_lng) openLocation(order.delivery_lat, order.delivery_lng);
-              }}
-              className="block text-primary text-xs underline"
+              onClick={e => { e.stopPropagation(); if (order.delivery_lat && order.delivery_lng) openLocation(order.delivery_lat, order.delivery_lng); }}
+              className="text-xs text-foreground/90 text-right leading-relaxed line-clamp-1 hover:text-primary transition-colors w-full"
             >
               {order.delivery_address}
             </button>
@@ -78,9 +113,20 @@ export const OrderCard = ({ order, showChat = true, showDriverAmount = false, on
         </div>
       </div>
 
-      <div className="flex items-center justify-between text-xs text-muted-foreground">
-        <span>🚚 {order.delivery_type === 'pickup' ? t('common.pickup') : t('common.sixwheel')}</span>
-        <span className="font-semibold text-foreground">💰 {formatAmount(displayAmount)}</span>
+      {/* تذييل البطاقة */}
+      <div className="flex items-center justify-between mt-3 pt-3" style={{ borderTop: '1px solid hsl(20 20% 100% / 0.05)' }}>
+        <span className="text-xs text-muted-foreground">
+          {new Date(order.created_at).toLocaleDateString('ar-BH')}
+        </span>
+        <div className="flex items-center gap-1.5">
+          <span className="text-xs text-muted-foreground">المبلغ</span>
+          <span
+            className="font-black text-sm"
+            style={{ color: 'hsl(22 100% 62%)' }}
+          >
+            {formatAmount(displayAmount)}
+          </span>
+        </div>
       </div>
     </div>
   );

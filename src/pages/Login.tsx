@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
+import { CarLogo } from '@/components/CarLogo';
 
 const Login = () => {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
   const { toast } = useToast();
   const { t } = useTranslation();
 
@@ -22,77 +22,105 @@ const Login = () => {
     if (error) {
       toast({ title: t('common.error'), description: error.message, variant: 'destructive' });
       setLoading(false);
-      return;
     }
   };
 
   return (
-    <div className="app-container flex flex-col min-h-screen">
-      {/* خلفية متدرجة علوية */}
-      <div className="absolute inset-x-0 top-0 h-64 pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse at 50% -20%, hsl(24 94% 55% / 0.15) 0%, transparent 70%)' }} />
+    <div className="app-container flex flex-col min-h-screen overflow-hidden">
+      <div className="page-glow" />
 
-      <div className="flex-1 flex flex-col items-center justify-center px-6 relative z-10">
-        {/* الشعار */}
-        <div className="mb-10 text-center space-y-3">
-          <div className="w-20 h-20 rounded-3xl mx-auto flex items-center justify-center text-4xl"
-            style={{ background: 'linear-gradient(135deg, hsl(24 94% 55%), hsl(16 90% 48%))', boxShadow: '0 8px 32px hsl(24 94% 55% / 0.4)' }}>
-            🛵
+      {/* قسم الشعار */}
+      <div className="flex-1 flex flex-col justify-center px-6 relative z-10">
+        <div className="mb-12 flex flex-col items-center gap-5">
+          {/* أيقونة السيارة */}
+          <div
+            className="w-24 h-24 rounded-[28px] flex items-center justify-center"
+            style={{
+              background: 'linear-gradient(145deg, hsl(22 100% 55%), hsl(16 95% 45%))',
+              boxShadow: '0 12px 40px hsl(22 100% 55% / 0.45), 0 0 0 1px hsl(22 100% 55% / 0.2)',
+            }}
+          >
+            <CarLogo size={60} color="white" />
           </div>
-          <h1 className="text-4xl font-extrabold tracking-tight"
-            style={{ background: 'linear-gradient(135deg, hsl(24 94% 65%), hsl(16 90% 55%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            مندوبي
-          </h1>
-          <p className="text-muted-foreground text-sm">{t('auth.login')}</p>
+
+          {/* الاسم */}
+          <div className="text-center space-y-1">
+            <h1
+              className="text-5xl font-black tracking-tight"
+              style={{
+                background: 'linear-gradient(135deg, #fff 30%, hsl(22 100% 70%))',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              مندوبي
+            </h1>
+            <p className="text-muted-foreground text-sm font-medium">توصيل ذكي في البحرين</p>
+          </div>
         </div>
 
-        {/* النموذج */}
-        <form onSubmit={handleLogin} className="w-full max-w-sm space-y-3">
+        {/* نموذج الدخول */}
+        <form onSubmit={handleLogin} className="space-y-3 w-full max-w-sm mx-auto">
           <div className="relative">
-            <Input
+            <input
               type="tel"
               placeholder={t('auth.phone')}
               value={phone}
               onChange={e => setPhone(e.target.value.replace(/\D/g, ''))}
               required
-              className="h-13 bg-card border-border pr-20 rounded-xl text-base"
-              style={{ height: '52px' }}
-              dir="ltr"
+              className="input-field pr-20 text-left"
+              style={{ direction: 'ltr', textAlign: 'left', paddingRight: '80px' }}
             />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground font-medium">🇧🇭 +973</span>
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground font-semibold select-none">
+              🇧🇭 +973
+            </span>
           </div>
 
-          <Input
+          <input
             type="password"
             placeholder={t('auth.password')}
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
-            className="h-13 bg-card border-border rounded-xl text-base"
-            style={{ height: '52px' }}
-            dir="ltr"
+            className="input-field"
+            style={{ direction: 'ltr' }}
           />
 
-          <Button
+          <button
             type="submit"
-            className="w-full rounded-xl font-bold text-base"
-            style={{ height: '52px', background: 'linear-gradient(135deg, hsl(24 94% 55%), hsl(16 90% 48%))', boxShadow: '0 4px 20px hsl(24 94% 55% / 0.4)' }}
             disabled={loading}
+            className="btn-primary flex items-center justify-center text-base mt-2"
+            style={{ height: '52px', width: '100%', borderRadius: '14px' }}
           >
-            {loading ? t('common.loading') : t('auth.login')}
-          </Button>
+            {loading ? (
+              <span className="flex items-center gap-2">
+                <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                {t('common.loading')}
+              </span>
+            ) : t('auth.login')}
+          </button>
         </form>
 
-        <div className="mt-6 space-y-3 text-center">
+        <div className="mt-6 space-y-2 text-center">
           <p className="text-sm">
-            <Link to="/forgot-password" className="text-primary underline">{t('auth.forgotPassword')}؟</Link>
+            <Link to="/forgot-password" className="text-muted-foreground hover:text-primary transition-colors">
+              {t('auth.forgotPassword')}؟
+            </Link>
           </p>
           <p className="text-sm text-muted-foreground">
             {t('auth.noAccount')}{' '}
-            <Link to="/register" className="text-primary font-semibold underline">{t('auth.register')}</Link>
+            <Link to="/register" className="text-primary font-bold">
+              {t('auth.register')}
+            </Link>
           </p>
         </div>
       </div>
+
+      {/* خط سفلي */}
+      <div
+        className="h-1 mx-8 mb-8 rounded-full opacity-40"
+        style={{ background: 'linear-gradient(90deg, transparent, hsl(22 100% 55%), transparent)' }}
+      />
     </div>
   );
 };

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,106 +6,139 @@
 
 @layer base {
   :root {
-    /* خلفية دافئة داكنة */
-    --background: 20 18% 5%;
-    --foreground: 30 20% 96%;
+    --background: 18 20% 4%;
+    --foreground: 30 15% 95%;
 
-    --card: 22 20% 10%;
-    --card-foreground: 30 20% 96%;
+    --card: 20 22% 9%;
+    --card-foreground: 30 15% 95%;
 
-    --popover: 22 20% 10%;
-    --popover-foreground: 30 20% 96%;
+    --popover: 20 22% 9%;
+    --popover-foreground: 30 15% 95%;
 
-    /* اللون البرتقالي الرئيسي */
-    --primary: 24 94% 55%;
+    --primary: 22 100% 55%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 22 20% 16%;
-    --secondary-foreground: 30 20% 96%;
+    --secondary: 20 22% 15%;
+    --secondary-foreground: 30 15% 95%;
 
-    --muted: 22 16% 9%;
-    --muted-foreground: 22 12% 52%;
+    --muted: 20 18% 8%;
+    --muted-foreground: 20 10% 50%;
 
-    --accent: 24 94% 55%;
+    --accent: 22 100% 55%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 348 90% 60%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 155 72% 45%;
+    --success: 152 76% 42%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 36 91% 55%;
+    --warning: 38 95% 55%;
     --warning-foreground: 0 0% 0%;
 
-    --border: 24 30% 100% / 0.08;
-    --input: 22 20% 16%;
-    --ring: 24 94% 55%;
+    --border: 20 20% 100% / 0.07;
+    --input: 20 22% 13%;
+    --ring: 22 100% 55%;
 
     --radius: 1rem;
 
-    --sidebar-background: 22 20% 10%;
-    --sidebar-foreground: 30 20% 96%;
-    --sidebar-primary: 24 94% 55%;
+    --sidebar-background: 20 22% 9%;
+    --sidebar-foreground: 30 15% 95%;
+    --sidebar-primary: 22 100% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 22 20% 16%;
-    --sidebar-accent-foreground: 30 20% 96%;
-    --sidebar-border: 24 30% 100% / 0.08;
-    --sidebar-ring: 24 94% 55%;
+    --sidebar-accent: 20 22% 15%;
+    --sidebar-accent-foreground: 30 15% 95%;
+    --sidebar-border: 20 20% 100% / 0.07;
+    --sidebar-ring: 22 100% 55%;
   }
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-
+  * { @apply border-border; }
   html {
     direction: rtl;
     font-family: 'Cairo', sans-serif;
+    -webkit-tap-highlight-color: transparent;
   }
-
-  body {
-    @apply bg-background text-foreground antialiased;
-  }
+  body { @apply bg-background text-foreground antialiased; }
 }
 
 @layer utilities {
+  /* شريط التنقل السفلي */
   .bottom-nav {
-    @apply fixed bottom-0 left-0 right-0 h-16 bg-card border-t border-border flex items-center justify-around z-50;
+    @apply fixed bottom-0 left-0 right-0 h-[62px] flex items-center justify-around z-50;
     max-width: 430px;
     margin: 0 auto;
-    border-top: 1px solid hsl(24 94% 55% / 0.15);
+    background: hsl(20 22% 7%);
+    border-top: 1px solid hsl(22 100% 55% / 0.12);
+    backdrop-filter: blur(16px);
   }
 
+  /* الشريط العلوي */
   .top-bar {
-    @apply sticky top-0 h-14 bg-card flex items-center justify-between px-4 z-40;
+    @apply sticky top-0 h-14 flex items-center justify-between px-4 z-40;
     max-width: 430px;
     margin: 0 auto;
-    border-bottom: 1px solid hsl(24 94% 55% / 0.2);
-    box-shadow: 0 1px 20px hsl(24 94% 55% / 0.06);
+    background: hsl(20 22% 6% / 0.95);
+    border-bottom: 1px solid hsl(20 20% 100% / 0.06);
+    backdrop-filter: blur(20px);
   }
 
   .app-container {
     @apply max-w-[430px] mx-auto min-h-screen relative;
+    background: hsl(var(--background));
   }
 
-  .page-content {
-    @apply px-4 pt-4 pb-20;
-  }
+  .page-content { @apply px-4 pt-4 pb-24; }
 
   .status-badge {
-    @apply px-3 py-1 rounded-full text-xs font-medium;
+    @apply px-2.5 py-1 rounded-full text-xs font-bold;
   }
 
-  /* توهج برتقالي على الأزرار */
-  .btn-glow {
-    box-shadow: 0 4px 20px hsl(24 94% 55% / 0.35);
+  /* بطاقة الطلب */
+  .order-card {
+    @apply rounded-2xl p-4 cursor-pointer transition-all duration-200 active:scale-[0.97];
+    background: hsl(20 22% 9%);
+    border: 1px solid hsl(20 20% 100% / 0.07);
+  }
+  .order-card:hover {
+    border-color: hsl(22 100% 55% / 0.25);
   }
 
-  /* بطاقة محسّنة */
-  .card-elevated {
-    @apply bg-card rounded-2xl border border-border;
-    box-shadow: 0 2px 12px hsl(20 18% 0% / 0.4);
+  /* زر رئيسي برتقالي */
+  .btn-primary {
+    @apply w-full rounded-xl font-bold text-white;
+    height: 52px;
+    background: linear-gradient(135deg, hsl(22 100% 55%), hsl(16 95% 48%));
+    box-shadow: 0 4px 20px hsl(22 100% 55% / 0.35);
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .btn-primary:active { transform: scale(0.98); opacity: 0.9; }
+  .btn-primary:disabled { opacity: 0.5; box-shadow: none; }
+
+  /* حقل إدخال */
+  .input-field {
+    @apply w-full rounded-xl bg-secondary border-border text-foreground placeholder:text-muted-foreground;
+    height: 52px;
+    padding: 0 16px;
+    border: 1px solid hsl(20 20% 100% / 0.08);
+    font-family: 'Cairo', sans-serif;
+    font-size: 15px;
+    transition: border-color 0.2s;
+  }
+  .input-field:focus {
+    outline: none;
+    border-color: hsl(22 100% 55% / 0.5);
+    box-shadow: 0 0 0 3px hsl(22 100% 55% / 0.1);
+  }
+
+  /* خلفية متدرجة للصفحات */
+  .page-glow {
+    position: absolute;
+    inset-x: 0;
+    top: 0;
+    height: 280px;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 50% -10%, hsl(22 100% 55% / 0.13) 0%, transparent 65%);
   }
 }
