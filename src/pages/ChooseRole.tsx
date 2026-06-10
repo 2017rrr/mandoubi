@@ -1,96 +1,73 @@
-import { useEffect } from 'react';
+import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-import { LanguageToggle } from '@/components/LanguageToggle';
 import { useTranslation } from 'react-i18next';
-
-const ADMIN_PHONE = '+97339105085';
 
 const ChooseRole = () => {
   const { user, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t } = useTranslation();
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const promoteAdminIfMatch = async () => {
-      if (!user) return;
-      if (user.phone && `+${user.phone}` === ADMIN_PHONE) {
-        await supabase.from('profiles').update({ role: 'admin' }).eq('id', user.id);
-        await refreshProfile();
-        navigate('/admin');
-      }
-    };
-    promoteAdminIfMatch();
-  }, [user, refreshProfile, navigate]);
-
-  const selectRole = async (role: 'store' | 'driver') => {
+  const handleChoose = async (role: 'store' | 'driver') => {
     if (!user) return;
-
-    const { error: roleError } = await supabase.from('profiles').update({ role }).eq('id', user.id);
-    if (roleError) {
-      toast({ title: t('common.error'), description: roleError.message, variant: 'destructive' });
-      return;
-    }
-
+    setLoading(true);
+    await supabase.from('profiles').update({ role }).eq('id', user.id);
     if (role === 'store') {
-      const { error: storeError } = await supabase
-        .from('stores')
-        .upsert({ user_id: user.id, store_name: '', location_text: '' }, { onConflict: 'user_id' });
-
-      if (storeError) {
-        toast({ title: t('common.error'), description: storeError.message, variant: 'destructive' });
-        return;
-      }
-
-      await refreshProfile();
-      navigate('/store');
-      return;
+      await supabase.from('stores').upsert({ user_id: user.id }, { onConflict: 'user_id' });
+    } else {
+      await supabase.from('drivers').upsert({ user_id: user.id }, { onConflict: 'user_id' });
     }
-
-    const { error: driverError } = await supabase
-      .from('drivers')
-      .upsert({ user_id: user.id, vehicle_type: 'pickup' }, { onConflict: 'user_id' });
-
-    if (driverError) {
-      toast({ title: t('common.error'), description: driverError.message, variant: 'destructive' });
-      return;
-    }
-
     await refreshProfile();
-    navigate('/driver');
+    navigate(role === 'store' ? '/store' : '/driver');
+    setLoading(false);
   };
 
   return (
-    <div className="app-container flex items-center justify-center min-h-screen px-6">
-      <div className="absolute top-4 left-4">
-        <LanguageToggle />
-      </div>
-      <div className="w-full max-w-sm space-y-8">
-        <div className="text-center space-y-2">
-          <h1 className="text-2xl font-bold">{t('chooseRole.title')}</h1>
-          <p className="text-muted-foreground text-sm">{t('chooseRole.subtitle')}</p>
+    <div className="app-container flex flex-col min-h-screen">
+      <div className="absolute inset-x-0 top-0 h-64 pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse at 50% -20%, hsl(24 94% 55% / 0.12) 0%, transparent 70%)' }} />
+
+      <div className="flex-1 flex flex-col items-center justify-center px-6 relative z-10">
+        <div className="mb-10 text-center space-y-2">
+          <h1 className="text-3xl font-extrabold">{t('role.title')}</h1>
+          <p className="text-muted-foreground text-sm">{t('role.subtitle')}</p>
         </div>
 
-        <div className="space-y-4">
-          <button
-            onClick={() => selectRole('store')}
-            className="w-full bg-card border border-border rounded-2xl p-6 text-right hover:border-primary transition-colors active:scale-[0.98]"
-          >
-            <span className="text-4xl">🏪</span>
-            <h2 className="text-lg font-bold mt-3">{t('chooseRole.store')}</h2>
-            <p className="text-sm text-muted-foreground mt-1">{t('chooseRole.storeDesc')}</p>
+        <div className="w-full max-w-sm space-y-4">
+          {/* بطاقة صاحب المحل */}
+          <button onClick={() => handleChoose('store')} disabled={loading}
+            className="w-full p-6 rounded-2xl border border-border bg-card text-right transition-all hover:scale-[1.02] active:scale-[0.98]"
+            style={{ boxShadow: '0 4px 20px hsl(20 18% 0% / 0.3)' }}>
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0"
+                style={{ background: 'linear-gradient(135deg, hsl(24 94% 55% / 0.2), hsl(16 90% 48% / 0.1))', border: '1px solid hsl(24 94% 55% / 0.3)' }}>
+                🏪
+              </div>
+              <div>
+                <p className="font-bold text-lg">{t('role.store')}</p>
+                <p className="text-sm text-muted-foreground mt-0.5">{t('role.storeDesc') || 'اطلب مندوبًا لتوصيل منتجاتك'}</p>
+              </div>
+            </div>
           </button>
 
-          <button
-            onClick={() => selectRole('driver')}
-            className="w-full bg-card border border-border rounded-2xl p-6 text-right hover:border-primary transition-colors active:scale-[0.98]"
-          >
-            <span className="text-4xl">🚗</span>
-            <h2 className="text-lg font-bold mt-3">{t('chooseRole.driver')}</h2>
-            <p className="text-sm text-muted-foreground mt-1">{t('chooseRole.driverDesc')}</p>
+          {/* بطاقة المندوب */}
+          <button onClick={() => handleChoose('driver')} disabled={loading}
+            className="w-full p-6 rounded-2xl border text-right transition-all hover:scale-[1.02] active:scale-[0.98]"
+            style={{ background: 'linear-gradient(135deg, hsl(24 94% 55% / 0.12), hsl(16 90% 48% / 0.06))', borderColor: 'hsl(24 94% 55% / 0.4)', boxShadow: '0 4px 24px hsl(24 94% 55% / 0.15)' }}>
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0"
+                style={{ background: 'linear-gradient(135deg, hsl(24 94% 55%), hsl(16 90% 48%))' }}>
+                🛵
+              </div>
+              <div>
+                <p className="font-bold text-lg text-primary">{t('role.driver')}</p>
+                <p className="text-sm text-muted-foreground mt-0.5">{t('role.driverDesc') || 'استلم طلبات ووصّل واكسب'}</p>
+              </div>
+            </div>
           </button>
         </div>
       </div>

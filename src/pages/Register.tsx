@@ -1,20 +1,19 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { useToast } from '@/hooks/use-toast';
-import { LanguageToggle } from '@/components/LanguageToggle';
 import { useTranslation } from 'react-i18next';
 
 const Register = () => {
+  const [step, setStep] = useState<'phone' | 'otp'>('phone');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [otp, setOtp] = useState('');
-  const [step, setStep] = useState<'form' | 'otp'>('form');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const { toast } = useToast();
   const { t } = useTranslation();
 
@@ -22,153 +21,86 @@ const Register = () => {
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) return;
-    if (!phone.trim()) return;
-    if (password.length < 8) {
-      toast({ title: t('common.error'), description: t('auth.passwordMinError'), variant: 'destructive' });
-      return;
-    }
     setLoading(true);
-
-    try {
-      const { error } = await supabase.auth.signInWithOtp({ phone: fullPhone });
-      if (error) {
-        toast({ title: t('common.error'), description: error.message, variant: 'destructive' });
-        return;
-      }
-      toast({ title: t('common.done'), description: t('auth.otpSent') });
+    const { error } = await supabase.auth.signUp({ phone: fullPhone, password });
+    if (error) {
+      toast({ title: t('common.error'), description: error.message, variant: 'destructive' });
+    } else {
       setStep('otp');
-    } catch (err) {
-      console.error('OTP send error:', err);
-      toast({ title: t('common.error'), description: t('auth.registrationError'), variant: 'destructive' });
-    } finally {
-      setLoading(false);
+      toast({ title: t('auth.otpSent') });
     }
+    setLoading(false);
   };
 
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (otp.length !== 6) return;
     setLoading(true);
-
-    try {
-      const { data, error } = await supabase.auth.verifyOtp({
-        phone: fullPhone,
-        token: otp,
-        type: 'sms',
-      });
-
-      if (error) {
-        toast({ title: t('common.error'), description: error.message, variant: 'destructive' });
-        return;
-      }
-
-      if (!data.user) {
-        toast({ title: t('common.error'), description: t('auth.accountCreateError'), variant: 'destructive' });
-        return;
-      }
-
-      // Update password so user can also log in with phone+password later
-      await supabase.auth.updateUser({ password });
-
-      // Upsert profile with name and phone
-      const { error: profileError } = await supabase.from('profiles').upsert({
-        id: data.user.id,
-        name,
-        phone: fullPhone,
-      }, { onConflict: 'id' });
-
-      if (profileError) {
-        throw profileError;
-      }
-
-      toast({ title: t('common.done'), description: t('auth.accountCreated') });
-    } catch (err) {
-      console.error('Verification error:', err);
-      const message = err instanceof Error ? err.message : t('auth.registrationError');
-      toast({ title: t('common.error'), description: message, variant: 'destructive' });
-    } finally {
+    const { error } = await supabase.auth.verifyOtp({ phone: fullPhone, token: otp, type: 'sms' });
+    if (error) {
+      toast({ title: t('common.error'), description: error.message, variant: 'destructive' });
       setLoading(false);
+      return;
     }
+    if (name) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) await supabase.from('profiles').update({ name, phone: fullPhone }).eq('id', user.id);
+    }
+    navigate('/choose-role');
+    setLoading(false);
   };
 
   return (
-    <div className="app-container flex items-center justify-center min-h-screen px-6">
-      <div className="absolute top-4 left-4">
-        <LanguageToggle />
-      </div>
-      <div className="w-full max-w-sm space-y-8">
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold">{t('common.appName')}</h1>
-          <p className="text-muted-foreground text-sm">
-            {step === 'form' ? t('auth.createAccount') : t('auth.enterOtp')}
-          </p>
+    <div className="app-container flex flex-col min-h-screen">
+      <div className="absolute inset-x-0 top-0 h-64 pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse at 50% -20%, hsl(24 94% 55% / 0.15) 0%, transparent 70%)' }} />
+
+      <div className="flex-1 flex flex-col items-center justify-center px-6 relative z-10">
+        <div className="mb-10 text-center space-y-3">
+          <div className="w-20 h-20 rounded-3xl mx-auto flex items-center justify-center text-4xl"
+            style={{ background: 'linear-gradient(135deg, hsl(24 94% 55%), hsl(16 90% 48%))', boxShadow: '0 8px 32px hsl(24 94% 55% / 0.4)' }}>
+            🛵
+          </div>
+          <h1 className="text-4xl font-extrabold tracking-tight"
+            style={{ background: 'linear-gradient(135deg, hsl(24 94% 65%), hsl(16 90% 55%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            مندوبي
+          </h1>
+          <p className="text-muted-foreground text-sm">{t('auth.register')}</p>
         </div>
 
-        {step === 'form' ? (
-          <form onSubmit={handleSendOtp} className="space-y-4">
-            <Input
-              placeholder={t('auth.fullName')}
-              value={name}
-              onChange={e => setName(e.target.value)}
-              required
-              className="h-12 bg-card border-border"
-            />
+        {step === 'phone' ? (
+          <form onSubmit={handleSendOtp} className="w-full max-w-sm space-y-3">
+            <Input placeholder={t('auth.name')} value={name} onChange={e => setName(e.target.value)}
+              className="bg-card rounded-xl" style={{ height: '52px' }} />
             <div className="relative">
-              <Input
-                type="tel"
-                placeholder={t('auth.phone')}
-                value={phone}
-                onChange={e => setPhone(e.target.value.replace(/\D/g, ''))}
-                required
-                className="h-12 bg-card border-border pr-20"
-                dir="ltr"
-              />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">🇧🇭 +973</span>
+              <Input type="tel" placeholder={t('auth.phone')} value={phone}
+                onChange={e => setPhone(e.target.value.replace(/\D/g, ''))} required
+                className="bg-card border-border pr-20 rounded-xl" style={{ height: '52px' }} dir="ltr" />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground font-medium">🇧🇭 +973</span>
             </div>
-            <Input
-              type="password"
-              placeholder={t('auth.passwordHint')}
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              minLength={8}
-              className="h-12 bg-card border-border"
-              dir="ltr"
-            />
-            <Button type="submit" className="w-full h-12 rounded-xl" disabled={loading}>
+            <Input type="password" placeholder={t('auth.password')} value={password}
+              onChange={e => setPassword(e.target.value)} required
+              className="bg-card border-border rounded-xl" style={{ height: '52px' }} dir="ltr" />
+            <Button type="submit" className="w-full rounded-xl font-bold text-base" disabled={loading}
+              style={{ height: '52px', background: 'linear-gradient(135deg, hsl(24 94% 55%), hsl(16 90% 48%))', boxShadow: '0 4px 20px hsl(24 94% 55% / 0.4)' }}>
               {loading ? t('common.loading') : t('auth.sendOtp')}
             </Button>
           </form>
         ) : (
-          <form onSubmit={handleVerifyOtp} className="space-y-6">
-            <p className="text-center text-sm text-muted-foreground">
-              {t('auth.otpSentTo')} <span dir="ltr" className="font-mono">{fullPhone}</span>
-            </p>
-            <div className="flex justify-center" dir="ltr">
-              <InputOTP maxLength={6} value={otp} onChange={setOtp}>
-                <InputOTPGroup>
-                  <InputOTPSlot index={0} />
-                  <InputOTPSlot index={1} />
-                  <InputOTPSlot index={2} />
-                  <InputOTPSlot index={3} />
-                  <InputOTPSlot index={4} />
-                  <InputOTPSlot index={5} />
-                </InputOTPGroup>
-              </InputOTP>
-            </div>
-            <Button type="submit" className="w-full h-12 rounded-xl" disabled={loading || otp.length !== 6}>
-              {loading ? t('common.loading') : t('auth.verifyOtp')}
-            </Button>
-            <Button type="button" variant="ghost" className="w-full" onClick={() => { setStep('form'); setOtp(''); }}>
-              {t('common.back')}
+          <form onSubmit={handleVerifyOtp} className="w-full max-w-sm space-y-3">
+            <p className="text-center text-sm text-muted-foreground">{t('auth.otpSentTo')} {fullPhone}</p>
+            <Input type="text" placeholder={t('auth.otpCode')} value={otp}
+              onChange={e => setOtp(e.target.value.replace(/\D/g, ''))} required maxLength={6}
+              className="bg-card border-border rounded-xl text-center text-2xl tracking-widest" style={{ height: '60px' }} dir="ltr" />
+            <Button type="submit" className="w-full rounded-xl font-bold text-base" disabled={loading}
+              style={{ height: '52px', background: 'linear-gradient(135deg, hsl(24 94% 55%), hsl(16 90% 48%))', boxShadow: '0 4px 20px hsl(24 94% 55% / 0.4)' }}>
+              {loading ? t('common.loading') : t('auth.verify')}
             </Button>
           </form>
         )}
 
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="mt-6 text-center text-sm text-muted-foreground">
           {t('auth.haveAccount')}{' '}
-          <Link to="/login" className="text-primary underline">{t('auth.login')}</Link>
+          <Link to="/login" className="text-primary font-semibold underline">{t('auth.login')}</Link>
         </p>
       </div>
     </div>

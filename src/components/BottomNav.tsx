@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 interface NavItem {
@@ -7,11 +6,7 @@ interface NavItem {
   path: string;
 }
 
-interface BottomNavProps {
-  items: NavItem[];
-}
-
-export const BottomNav = ({ items }: BottomNavProps) => {
+export const BottomNav = ({ items }: { items: NavItem[] }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -20,15 +15,19 @@ export const BottomNav = ({ items }: BottomNavProps) => {
       {items.map((item) => {
         const isActive = location.pathname === item.path;
         return (
-          <button
-            key={item.path}
-            onClick={() => navigate(item.path)}
-            className={`flex flex-col items-center gap-0.5 px-1 py-1 transition-colors min-w-0 flex-1 ${
-              isActive ? 'text-primary' : 'text-muted-foreground'
-            }`}
-          >
-            <span className="text-base">{item.icon}</span>
-            <span className="text-[9px] font-medium truncate max-w-full">{item.label}</span>
+          <button key={item.path} onClick={() => navigate(item.path)}
+            className="flex flex-col items-center gap-0.5 px-3 py-1 transition-all min-w-0 flex-1 relative">
+            {/* مؤشر نشط */}
+            {isActive && (
+              <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full"
+                style={{ background: 'hsl(24 94% 55%)' }} />
+            )}
+            <span className={`text-xl transition-transform ${isActive ? 'scale-110' : 'scale-100 opacity-60'}`}>
+              {item.icon}
+            </span>
+            <span className={`text-[9px] font-bold truncate max-w-full transition-colors ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
+              {item.label}
+            </span>
           </button>
         );
       })}
