@@ -1,0 +1,1 @@
+CREATE POLICY "driver_read_pending_orders" ON public.orders FOR SELECT TO authenticated USING (driver_id IS NULL AND status = 'pending' AND EXISTS (SELECT 1 FROM public.drivers WHERE drivers.user_id = auth.uid()));

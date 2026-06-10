@@ -1,0 +1,1 @@
+CREATE POLICY "driver_read_stores" ON public.stores FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.drivers WHERE drivers.user_id = auth.uid()));

@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 4%;
+    --foreground: 228 33% 97%;
+
+    --card: 222 24% 16%;
+    --card-foreground: 228 33% 97%;
+
+    --popover: 222 24% 16%;
+    --popover-foreground: 228 33% 97%;
+
+    --primary: 220 100% 65%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 222 24% 20%;
+    --secondary-foreground: 228 33% 97%;
+
+    --muted: 222 20% 14%;
+    --muted-foreground: 222 18% 60%;
+
+    --accent: 220 100% 65%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 348 100% 65%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 155 72% 47%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 36 91% 55%;
+    --warning-foreground: 0 0% 0%;
+
+    --border: 0 0% 100% / 0.08;
+    --input: 222 24% 20%;
+    --ring: 220 100% 65%;
+
+    --radius: 1rem;
+
+    --sidebar-background: 222 24% 16%;
+    --sidebar-foreground: 228 33% 97%;
+    --sidebar-primary: 220 100% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 222 24% 20%;
+    --sidebar-accent-foreground: 228 33% 97%;
+    --sidebar-border: 0 0% 100% / 0.08;
+    --sidebar-ring: 220 100% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    direction: rtl;
+    font-family: 'IBM Plex Sans Arabic', sans-serif;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+@layer utilities {
+  .bottom-nav {
+    @apply fixed bottom-0 left-0 right-0 h-16 bg-card border-t border-border flex items-center justify-around z-50;
+    max-width: 430px;
+    margin: 0 auto;
+  }
+
+  .top-bar {
+    @apply sticky top-0 h-14 bg-card border-b border-border flex items-center justify-between px-4 z-40;
+    max-width: 430px;
+    margin: 0 auto;
+  }
+
+  .app-container {
+    @apply max-w-[430px] mx-auto min-h-screen relative;
+  }
+
+  .page-content {
+    @apply px-4 pt-4 pb-20;
+  }
+
+  .status-badge {
+    @apply px-3 py-1 rounded-full text-xs font-medium;
+  }
+}

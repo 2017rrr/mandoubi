@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>مندوبي | Mandoubi</title>
+    <meta name="description" content="مندوبي — منصة توصيل ذكية في مملكة البحرين" />
+    <meta name="author" content="Mandoubi" />
+    <meta name="theme-color" content="#0a0c10" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon-16x16.png" sizes="16x16" type="image/png" />
+    <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="مندوبي" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <meta property="og:title" content="مندوبي | Mandoubi" />
+    <meta property="og:description" content="منصة توصيل ذكية في مملكة البحرين" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://mandoubi.com" />
+    <meta property="og:image" content="/icon-512.png" />
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) { console.log('SW registered'); })
+            .catch(function(err) { console.log('SW error:', err); });
+        });
+      }
+    </script>
+  </body>
+</html>
