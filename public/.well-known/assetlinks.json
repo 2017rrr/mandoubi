@@ -6,7 +6,7 @@
     ],
     "target": {
       "namespace": "android_app",
-      "package_name": "com.mishawark.twa",
+      "package_name": "com.mandoubi.app",
       "sha256_cert_fingerprints": [
         "8C:CE:A7:00:1B:79:C9:2F:8C:1C:1E:25:B4:95:DF:7E:7F:3F:C5:68:25:67:4F:A4:0E:FC:04:FD:D1:28:F1:FA",
         "0C:C1:AC:E2:10:87:73:35:10:A1:72:6C:EE:3E:55:D9:D8:96:8B:B6:02:3F:B1:05:C5:58:98:E1:3A:A6:66:AB"

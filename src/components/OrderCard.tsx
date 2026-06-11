@@ -47,12 +47,9 @@ export const OrderCard = ({ order, showDriverAmount = false, onClick }: OrderCar
     >
       {/* رأس البطاقة */}
       <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground font-medium">طلب</span>
-          <span className="font-black text-base" style={{ color: 'hsl(22 100% 62%)' }}>
-            #{order.order_number}
-          </span>
-        </div>
+        <span className="order-number-pill">
+          #{order.order_number}
+        </span>
         {/* شارة الحالة */}
         <div
           className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold"
@@ -66,46 +63,44 @@ export const OrderCard = ({ order, showDriverAmount = false, onClick }: OrderCar
       {/* خط فاصل */}
       <div className="h-px mb-3" style={{ background: 'hsl(20 20% 100% / 0.05)' }} />
 
-      {/* العناوين */}
-      <div className="space-y-2.5">
-        <div className="flex items-start gap-3">
-          <div className="mt-0.5 flex-shrink-0">
-            <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: 'hsl(22 100% 55% / 0.15)' }}>
-              <MapPin size={13} style={{ color: 'hsl(22 100% 60%)' }} />
-            </div>
+      {/* العناوين — route display */}
+      <div className="flex gap-3">
+        {/* ── عمود الأيقونات والـ connector ── */}
+        <div className="flex flex-col items-center flex-shrink-0 pt-0.5">
+          {/* نقطة الاستلام */}
+          <div className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
+               style={{ background: 'hsl(24 100% 56% / 0.15)' }}>
+            <MapPin size={13} style={{ color: 'hsl(24 100% 62%)' }} />
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-[10px] text-muted-foreground mb-0.5">{t('common.from')}</p>
+          {/* خط رابط منقّط */}
+          <div className="flex-1 my-1" style={{
+            width: '2px',
+            minHeight: '14px',
+            borderRight: '2px dashed hsl(152 76% 45% / 0.35)',
+          }} />
+          {/* نقطة التوصيل */}
+          <div className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0"
+               style={{ background: 'hsl(152 76% 42% / 0.15)' }}>
+            <MapPin size={13} style={{ color: 'hsl(152 76% 52%)' }} />
+          </div>
+        </div>
+
+        {/* ── عمود النصوص ── */}
+        <div className="flex-1 min-w-0 flex flex-col justify-between gap-2.5">
+          <div>
+            <p className="text-[11px] text-muted-foreground mb-0.5 font-medium">{t('common.from')}</p>
             <button
               onClick={e => { e.stopPropagation(); if (order.pickup_lat && order.pickup_lng) openLocation(order.pickup_lat, order.pickup_lng); }}
-              className="text-xs text-foreground/90 text-right leading-relaxed line-clamp-1 hover:text-primary transition-colors w-full"
+              className="text-[13px] text-foreground/90 text-right leading-snug line-clamp-1 hover:text-primary transition-colors w-full"
             >
               {order.pickup_address}
             </button>
           </div>
-        </div>
-
-        {/* خط اتصال */}
-        <div className="flex items-start gap-3">
-          <div className="flex flex-col items-center" style={{ marginRight: '9px', width: '6px', gap: '2px', marginTop: '-6px' }}>
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="w-0.5 h-1 rounded-full" style={{ background: 'hsl(152 76% 45% / 0.4)' }} />
-            ))}
-          </div>
-          <div />
-        </div>
-
-        <div className="flex items-start gap-3">
-          <div className="mt-0.5 flex-shrink-0">
-            <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: 'hsl(152 76% 42% / 0.15)' }}>
-              <MapPin size={13} style={{ color: 'hsl(152 76% 50%)' }} />
-            </div>
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-[10px] text-muted-foreground mb-0.5">{t('common.to')}</p>
+          <div>
+            <p className="text-[11px] text-muted-foreground mb-0.5 font-medium">{t('common.to')}</p>
             <button
               onClick={e => { e.stopPropagation(); if (order.delivery_lat && order.delivery_lng) openLocation(order.delivery_lat, order.delivery_lng); }}
-              className="text-xs text-foreground/90 text-right leading-relaxed line-clamp-1 hover:text-primary transition-colors w-full"
+              className="text-[13px] text-foreground/90 text-right leading-snug line-clamp-1 hover:text-primary transition-colors w-full"
             >
               {order.delivery_address}
             </button>
