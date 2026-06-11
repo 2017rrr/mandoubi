@@ -141,7 +141,7 @@ const DriverActive = () => {
               <div className="space-y-1 text-sm">
                 <p><span className="text-muted-foreground">📍 {t('common.from')}</span> {o.pickup_address}</p>
                 <p><span className="text-muted-foreground">📍 {t('common.to')}</span> {o.delivery_address}</p>
-                <p>🚚 {o.delivery_type === "pickup" ? t('common.pickup') : t('common.sixwheel')}</p>
+                <p>🚚 {t('common.standard')}</p>
               </div>
               <Button className="w-full h-10 rounded-xl" onClick={() => acceptOrder(o.id)}>{t('driver.acceptOrder')}</Button>
             </div>
@@ -173,7 +173,7 @@ const DriverActive = () => {
                     <p>{order.delivery_address}</p>
                     {order.delivery_lat && <Button variant="outline" size="sm" onClick={() => openNavigation(order.delivery_lat, order.delivery_lng)} className="mt-1 text-xs">{t('common.openGoogleMaps')}</Button>}
                   </div>
-                  <p>{t('driver.deliveryTypeLabel')} {order.delivery_type === "pickup" ? t('common.pickup') : t('common.sixwheel')}</p>
+                  <p>{t('driver.deliveryTypeLabel')} {t('common.standard')}</p>
                   <p>{t('driver.amountLabel')} {formatAmount(order.driver_amount ?? getDriverEarning(order.amount))}</p>
                   <a href={`tel:${order.client_phone}`} className="text-primary underline block">📞 {order.client_phone}</a>
                   {order.description && <p>📝 {order.description}</p>}
@@ -286,12 +286,12 @@ const DriverProfile = () => {
   const { user, profile, signOut } = useAuth();
   const { toast } = useToast();
   const { t } = useTranslation();
-  const [vehicleType, setVehicleType] = useState("pickup");
+  const [vehicleType] = useState("standard");
 
   useEffect(() => {
     if (!user) return;
     supabase.from("drivers").select("vehicle_type").eq("user_id", user.id).single().then(({ data }) => {
-      if (data) setVehicleType(data.vehicle_type || "pickup");
+      if (data) { /* vehicle_type is always standard */ }
     });
   }, [user]);
 
@@ -321,10 +321,9 @@ const DriverProfile = () => {
 
       <div className="space-y-3">
         <label className="text-sm font-medium">{t('driver.vehicleType')}</label>
-        <select value={vehicleType} onChange={(e) => setVehicleType(e.target.value)} className="w-full h-12 rounded-xl bg-card border border-border px-4 text-foreground">
-          <option value="pickup">{t('common.pickup')}</option>
-          <option value="sixwheel">{t('common.sixwheel')}</option>
-        </select>
+        <div className="w-full h-12 rounded-xl bg-card border border-border px-4 flex items-center text-foreground">
+          {t('common.standard')}
+        </div>
         <Button onClick={handleSave} className="w-full h-12 rounded-xl">{t('common.save')}</Button>
       </div>
 

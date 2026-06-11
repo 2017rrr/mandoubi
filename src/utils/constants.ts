@@ -31,7 +31,7 @@ export const STATUS_LABELS: Record<OrderStatus, { label: string; color: string }
   cancelled: { label: 'ملغي', color: 'bg-destructive/20 text-destructive' },
 };
 
-export const formatAmount = (amount: number) => `${amount.toFixed(3)} BD`;
+export const formatAmount = (amount: number) => `${(amount ?? 0).toFixed(3)} BD`;
 
 export const openMapPicker = () => {
   window.open('https://maps.google.com', '_blank');

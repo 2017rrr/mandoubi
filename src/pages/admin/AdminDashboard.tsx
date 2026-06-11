@@ -213,7 +213,7 @@ const AdminOrders = () => {
               <div className="space-y-2 text-sm">
                 <p>📍 {t('common.from')} {selectedOrder.pickup_address}</p>
                 <p>📍 {t('common.to')} {selectedOrder.delivery_address}</p>
-                <p>{t('admin.type')} {selectedOrder.delivery_type === 'pickup' ? t('common.pickup') : t('common.sixwheel')}</p>
+                <p>{t('admin.type')} {t('common.standard')}</p>
                 <p>💰 {t('common.amount')}: {formatAmount(selectedOrder.amount)}</p>
                 <p>{t('admin.client')} {selectedOrder.client_phone}</p>
               </div>
@@ -243,7 +243,7 @@ const AdminOrders = () => {
                   <option value="" disabled>{selectedOrder.driver_id ? t('admin.changeDriver') : t('admin.chooseDriver')}</option>
                   {drivers.map(d => (
                     <option key={d.id} value={d.id}>
-                      {(d as any).profiles?.name || t('admin.driverRole')} — {d.vehicle_type === 'pickup' ? t('common.pickup') : t('common.sixwheel')}
+                      {(d as any).profiles?.name || t('admin.driverRole')}
                     </option>
                   ))}
                 </select>
@@ -520,7 +520,7 @@ const AdminPayments = () => {
 
               {/* نوع التوصيل والتاريخ */}
               <div className="flex justify-between text-xs text-muted-foreground">
-                <span>{o.delivery_type === 'pickup' ? t('common.pickup') : t('common.sixwheel')}</span>
+                <span>{t('common.standard')}</span>
                 <span>{new Date(o.created_at).toLocaleString('ar-BH')}</span>
               </div>
 
@@ -620,7 +620,7 @@ const AdminReports = () => {
           <div key={d.driver_id} className="bg-card rounded-2xl border border-border p-4 space-y-1">
             <div className="flex justify-between items-center">
               <p className="font-medium">{d.driver_name || '—'}</p>
-              <span className="text-xs text-muted-foreground">{d.vehicle_type === 'pickup' ? t('common.pickup') : t('common.sixwheel')}</span>
+              <span className="text-xs text-muted-foreground">{t('common.standard')}</span>
             </div>
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>{t('admin.completedOrders')}: <b className="text-foreground">{d.completed_orders}</b></span>
@@ -644,7 +644,7 @@ const AdminCreateOrder = () => {
   const [storeId, setStoreId] = useState('');
   const [pickupAddress, setPickupAddress] = useState('');
   const [deliveryAddress, setDeliveryAddress] = useState('');
-  const [deliveryType, setDeliveryType] = useState<DeliveryType | null>(null);
+  const [deliveryType] = useState<DeliveryType>('standard');
   const [description, setDescription] = useState('');
   const [clientPhone, setClientPhone] = useState('');
   const [pickupTime, setPickupTime] = useState<'immediate' | 'scheduled'>('immediate');
@@ -675,7 +675,7 @@ const AdminCreateOrder = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!storeId || !deliveryType) return;
+    if (!storeId) return;
     setLoading(true);
     const amount = PRICES[deliveryType];
     const { data: order, error } = await supabase.from('orders').insert({
@@ -771,24 +771,10 @@ const AdminCreateOrder = () => {
           <Button type="button" variant="outline" onClick={openMapPicker} className="w-full h-10 text-sm">{t('common.chooseOnMap')}</Button>
         </div>
 
-        <div className="space-y-2">
-          <label className="text-sm font-medium">{t('store.deliveryType')}</label>
-          <div className="grid grid-cols-2 gap-3">
-            {(['pickup', 'sixwheel'] as DeliveryType[]).map(type => (
-              <button
-                key={type}
-                type="button"
-                onClick={() => setDeliveryType(type)}
-                className={`p-4 rounded-2xl border text-center transition-colors ${
-                  deliveryType === type ? 'border-primary bg-primary/10' : 'border-border bg-card'
-                }`}
-              >
-                <span className="text-2xl">{type === 'pickup' ? '🚗' : '🚛'}</span>
-                <p className="font-medium text-sm mt-1">{type === 'pickup' ? t('common.pickup') : t('common.sixwheel')}</p>
-                <p className="text-primary font-bold text-sm">{formatAmount(PRICES[type])}</p>
-              </button>
-            ))}
-          </div>
+        <div className="p-4 rounded-2xl border border-primary bg-primary/10 text-center">
+          <span className="text-2xl">🚗</span>
+          <p className="font-medium text-sm mt-1">{t('common.standard')}</p>
+          <p className="text-primary font-bold text-sm">{formatAmount(PRICES.standard)}</p>
         </div>
 
         <div className="space-y-3">
@@ -815,7 +801,7 @@ const AdminCreateOrder = () => {
           <Textarea placeholder={t('store.notes')} value={notes} onChange={e => setNotes(e.target.value)} className="bg-card" />
         </div>
 
-        <Button type="submit" className="w-full h-12 rounded-xl" disabled={loading || !deliveryType || !storeId}>
+        <Button type="submit" className="w-full h-12 rounded-xl" disabled={loading || !storeId}>
           {loading ? t('store.submitting') : t('store.confirmOrder')}
         </Button>
       </form>
