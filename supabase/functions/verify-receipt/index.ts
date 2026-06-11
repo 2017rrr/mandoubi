@@ -62,9 +62,11 @@ serve(async (req) => {
     // Determine mime type
     const contentType = imageResponse.headers.get("content-type") || "image/jpeg";
 
-    const currentTime = new Date().toISOString();
+    const now = new Date();
+    const bahrainTime = new Date(now.getTime() + 3 * 60 * 60 * 1000);
+    const currentTime = bahrainTime.toISOString().replace("Z", "+03:00");
 
-    const prompt = `You are a payment receipt verifier. The current time is ${currentTime}. Analyze this BenefitPay receipt image and respond with JSON only, no markdown, no extra text: { "approved": true/false, "amount": number, "reason": "string" }. Approve ONLY if ALL conditions are met: 1) The recipient number is 39105085, 2) The amount matches or exceeds the expected amount of ${expectedAmount} BHD, 3) The receipt appears genuine, 4) The payment/transaction time shown on the receipt is within the last 1 hour from the current time. If the payment time is older than 1 hour, reject with reason "الإيصال منتهي الصلاحية، يجب أن يكون الدفع خلال ساعة واحدة من إنشاء الطلب". Reject otherwise with reason in Arabic.`;
+    const prompt = `You are a payment receipt verifier. The current time in Bahrain (UTC+3) is ${currentTime}. Analyze this BenefitPay receipt image and respond with JSON only, no markdown, no extra text: { "approved": true/false, "amount": number, "reason": "string" }. Approve ONLY if ALL conditions are met: 1) The recipient number is 39105085, 2) The amount matches or exceeds the expected amount of ${expectedAmount} BHD, 3) The receipt appears genuine, 4) The payment/transaction time shown on the receipt is within the last 1 hour from the current Bahrain time. If the payment time is older than 1 hour, reject with reason "الإيصال منتهي الصلاحية، يجب أن يكون الدفع خلال ساعة واحدة من إنشاء الطلب". Reject otherwise with reason in Arabic.`;
 
     const aiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
