@@ -29,7 +29,7 @@
     --secondary-foreground: 30 15% 95%;
 
     --muted: 20 18% 8%;
-    --muted-foreground: 24 12% 55%;   /* أدفأ وأوضح — يجتاز WCAG AA */
+    --muted-foreground: 24 12% 62%;   /* يجتاز WCAG AA حتى على خلفية الحقول (surface) */
 
     --accent: 24 100% 56%;
     --accent-foreground: 0 0% 100%;
