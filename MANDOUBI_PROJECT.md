@@ -33,8 +33,8 @@ Anon Key:       [موجود في .env.local و Vercel Environment Variables]
 ```typescript
 // src/utils/constants.ts
 PRICES.standard = 2.000  // البحريني يدفع
-COMMISSION       = 1.000  // عمولة الشركة
-DRIVER_EARNINGS.standard = 1.000  // المندوب يحصل
+COMMISSION       = 0.200  // عمولة الشركة
+DRIVER_EARNINGS.standard = 1.800  // المندوب يحصل
 
 // صيغة المبلغ دائماً
 formatAmount(2) → "2.000 BD"
@@ -378,7 +378,7 @@ import { CarLogo } from '@/components/CarLogo';
 ```tsx
 <OrderCard
   order={order}
-  showDriverAmount={true}   // لعرض نصيب المندوب (1 BD)
+  showDriverAmount={true}   // لعرض نصيب المندوب (1.8 BD)
   showDriverAmount={false}  // لعرض السعر الكامل (2 BD)
 />
 ```
@@ -489,7 +489,7 @@ await supabase.from('notifications').insert({
 |---------|-------|
 | استخدم `\|` كفاصل في callback_data تلغرام | UUID يحتوي على `_` فيختلط |
 | توقيت البحرين = UTC+3 دائماً | verify-receipt يقارن بالتوقيت المحلي |
-| المندوب يحصل على `amount - 1` دائماً | عمولة الشركة 1 BD |
+| المندوب يحصل على `amount - 0.2` دائماً | عمولة الشركة 0.2 BD |
 | لا تستخدم `.single()` مع استعلامات متعددة | يسبب PGRST116 |
 | `delivery_type` دائماً `'standard'` | مندوبي لا يدعم أنواع أخرى |
 | `amount` دائماً `2.000` | السعر ثابت في مندوبي |

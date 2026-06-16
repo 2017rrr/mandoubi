@@ -101,7 +101,7 @@ State clearly what you want to do and why, then wait.
 
 Before handing off, mentally run through:
 - [ ] Read CLAUDE.md and MANDOUBI_PROJECT.md before starting?
-- [ ] Price is 2.000 BD, driver earns amount - 1?
+- [ ] Price is 2.000 BD, driver earns amount - 0.2 (company commission 0.2 BD)?
 - [ ] delivery_type is 'standard'?
 - [ ] All new tables have full RLS?
 - [ ] Loading, empty, and error states implemented?

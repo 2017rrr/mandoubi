@@ -26,7 +26,7 @@ Built on the same structure as Mishwar but COMPLETELY separate.
 | Rule | Reason |
 |------|--------|
 | Price is always 2.000 BD | Fixed price in Mandoubi |
-| Driver always earns amount - 1 | Company commission is 1 BD |
+| Driver always earns amount - 0.2 | Company commission is 0.2 BD |
 | delivery_type is always 'standard' | Mandoubi has no other types |
 | Bahrain time = UTC+3 always | verify-receipt compares to local time |
 | Use `\|` as separator in Telegram callback_data | UUIDs contain `_` |
@@ -111,7 +111,7 @@ Read CLAUDE.md and MANDOUBI_PROJECT.md before reviewing.
 
 ## What you verify (in order)
 1. Security: every table has correct RLS, no secrets in code/frontend.
-2. Business rules: price = 2.000, driver earns amount - 1,
+2. Business rules: price = 2.000, driver earns amount - 0.2,
    delivery_type = 'standard', UTC+3 timing in verify-receipt.
 3. Bot rules: uses the dedicated RPCs, `|` separator in callback_data.
 4. UX: loading / empty / error states present, RTL works, Cairo font.

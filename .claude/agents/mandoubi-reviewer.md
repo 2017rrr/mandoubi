@@ -35,7 +35,7 @@ You review only **recently written or modified code** — the current changeset,
 
 ### 2. Business Rules
 - `price` is set to exactly **2.000**.
-- Driver earnings are calculated as `amount - 1` (never a different formula).
+- Driver earnings are calculated as `amount - 0.2` (company commission is 0.2 BD; never a different formula).
 - `delivery_type` is always `'standard'`.
 - All time calculations in `verify-receipt` (and related logic) use **UTC+3** timezone.
 

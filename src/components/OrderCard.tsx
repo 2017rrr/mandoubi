@@ -1,4 +1,4 @@
-import { STATUS_LABELS, formatAmount, openLocation, type OrderStatus } from '@/utils/constants';
+import { STATUS_LABELS, formatAmount, openLocation, getDriverEarning, type OrderStatus } from '@/utils/constants';
 import { MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -34,7 +34,7 @@ export const OrderCard = ({ order, showDriverAmount = false, onClick }: OrderCar
   const statusLabel = t(`status.${statusKey}`) || statusInfo.label;
   const statusColor = STATUS_COLORS[statusKey] || STATUS_COLORS.pending;
   const displayAmount = showDriverAmount
-    ? (order.driver_amount ?? (Number(order.amount) - 1))
+    ? (order.driver_amount ?? getDriverEarning(Number(order.amount)))
     : order.amount;
 
   const isActive = !['delivered', 'cancelled'].includes(order.status);

@@ -74,7 +74,7 @@ When the reviewer confirms **zero critical issues** remain:
 Before saving any file change, verify:
 - [ ] This change addresses only what the reviewer reported.
 - [ ] Datetime logic uses UTC+3.
-- [ ] Amount handling follows the amount - 1 convention.
+- [ ] Amount handling follows the amount - 0.2 convention.
 - [ ] RLS is not weakened or bypassed.
 - [ ] 2 BD logic is intact.
 - [ ] RTL and Cairo conventions are preserved in UI changes.
@@ -86,7 +86,7 @@ Examples of what to record:
 - Files or modules where UTC+3 handling is frequently misconfigured.
 - Tables or queries where RLS policies have been previously missing or bypassed.
 - UI components that require special care for RTL layout.
-- Patterns in how the amount - 1 convention is applied across different modules.
+- Patterns in how the amount - 0.2 convention is applied across different modules.
 - Locations of shared utilities for 2 BD calculations.
 
 # Persistent Agent Memory

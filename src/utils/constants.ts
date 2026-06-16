@@ -2,12 +2,12 @@ export const PRICES = {
   standard: 2.000,
 } as const;
 
-// عمولة الشركة لكل طلب: 1 دينار
-export const COMMISSION = 1.000;
+// عمولة الشركة لكل طلب: 0.2 دينار
+export const COMMISSION = 0.200;
 
-// نصيب المندوب بعد خصم العمولة
+// نصيب السائق بعد خصم العمولة
 export const DRIVER_EARNINGS = {
-  standard: 1.000, // 2 - 1
+  standard: 1.800, // 2 - 0.2
 } as const;
 
 // دالة مساعدة لحساب نصيب المندوب
