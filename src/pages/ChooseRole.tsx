@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { CarLogo } from '@/components/CarLogo';
+import { LanguageToggle } from '@/components/LanguageToggle';
 
 const ChooseRole = () => {
   const { user, refreshProfile } = useAuth();
@@ -30,6 +31,9 @@ const ChooseRole = () => {
   return (
     <div className="app-container flex flex-col min-h-screen">
       <div className="page-glow" />
+      <div className="absolute top-4 left-4 z-20">
+        <LanguageToggle />
+      </div>
 
       <div className="flex-1 flex flex-col justify-center px-5 relative z-10 gap-8">
         {/* العنوان */}
@@ -42,8 +46,8 @@ const ChooseRole = () => {
               <CarLogo size={40} color="white" />
             </div>
           </div>
-          <h1 className="text-3xl font-black">{t('role.title')}</h1>
-          <p className="text-muted-foreground text-sm">{t('role.subtitle')}</p>
+          <h1 className="text-3xl font-black">{t('chooseRole.title')}</h1>
+          <p className="text-muted-foreground text-sm">{t('chooseRole.subtitle')}</p>
         </div>
 
         {/* الخيارات */}
@@ -69,8 +73,8 @@ const ChooseRole = () => {
                 🏪
               </div>
               <div className="flex-1">
-                <p className="font-bold text-lg">{t('role.store')}</p>
-                <p className="text-sm text-muted-foreground mt-0.5">اطلب مندوبًا لتوصيل منتجاتك</p>
+                <p className="font-bold text-lg">{t('chooseRole.store')}</p>
+                <p className="text-sm text-muted-foreground mt-0.5">{t('chooseRole.storeDesc')}</p>
               </div>
               <div
                 className="w-6 h-6 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all"
@@ -105,8 +109,8 @@ const ChooseRole = () => {
                 <CarLogo size={36} color="white" />
               </div>
               <div className="flex-1">
-                <p className="font-bold text-lg text-primary">{t('role.driver')}</p>
-                <p className="text-sm text-muted-foreground mt-0.5">استلم طلبات ووصّل واكسب</p>
+                <p className="font-bold text-lg text-primary">{t('chooseRole.driver')}</p>
+                <p className="text-sm text-muted-foreground mt-0.5">{t('chooseRole.driverDesc')}</p>
               </div>
               <div
                 className="w-6 h-6 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all"

@@ -6,6 +6,7 @@ import { playNotificationSound, unlockAudio } from '@/utils/notificationSound';
 import { useNavigate } from 'react-router-dom';
 import { CarLogo } from '@/components/CarLogo';
 import { useTranslation } from 'react-i18next';
+import { LanguageToggle } from '@/components/LanguageToggle';
 
 interface Notification {
   id: string; order_id: string | null; type: string;
@@ -14,7 +15,7 @@ interface Notification {
 
 export const TopBar = ({ title }: { title: string }) => {
   const { user } = useAuth();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [panelOpen, setPanelOpen] = useState(false);
@@ -72,22 +73,25 @@ export const TopBar = ({ title }: { title: string }) => {
           <span className="font-bold text-sm tracking-wide">{title}</span>
         </div>
 
-        {/* زر الإشعارات */}
-        <button
-          onClick={() => setPanelOpen(true)}
-          className="relative w-9 h-9 rounded-xl flex items-center justify-center transition-colors"
-          style={{ background: 'hsl(20 22% 14%)' }}
-        >
-          <Bell className="w-4.5 h-4.5" size={18} />
-          {unreadCount > 0 && (
-            <span
-              className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-black text-white flex items-center justify-center"
-              style={{ background: 'hsl(22 100% 55%)' }}
-            >
-              {unreadCount > 9 ? '9+' : unreadCount}
-            </span>
-          )}
-        </button>
+        {/* أزرار اللغة والإشعارات */}
+        <div className="flex items-center gap-2">
+          <LanguageToggle />
+          <button
+            onClick={() => setPanelOpen(true)}
+            className="relative w-9 h-9 rounded-xl flex items-center justify-center transition-colors"
+            style={{ background: 'hsl(20 22% 14%)' }}
+          >
+            <Bell className="w-4.5 h-4.5" size={18} />
+            {unreadCount > 0 && (
+              <span
+                className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-black text-white flex items-center justify-center"
+                style={{ background: 'hsl(22 100% 55%)' }}
+              >
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* لوحة الإشعارات */}
@@ -120,7 +124,7 @@ export const TopBar = ({ title }: { title: string }) => {
                   }}>
                   <p className={`text-sm ${n.is_read ? 'text-muted-foreground' : 'font-semibold'}`}>{n.title}</p>
                   <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{n.body}</p>
-                  <p className="text-[10px] text-muted-foreground/60 mt-1.5">{new Date(n.created_at).toLocaleString('ar-BH')}</p>
+                  <p className="text-[10px] text-muted-foreground/60 mt-1.5">{new Date(n.created_at).toLocaleString(i18n.language === 'ar' ? 'ar-BH' : 'en-GB')}</p>
                 </button>
               ))}
             </div>

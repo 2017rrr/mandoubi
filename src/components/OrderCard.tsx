@@ -28,7 +28,7 @@ const STATUS_COLORS: Record<string, { bg: string; text: string; dot: string }> =
 
 export const OrderCard = ({ order, showDriverAmount = false, onClick }: OrderCardProps) => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const statusKey = order.status as OrderStatus;
   const statusInfo = STATUS_LABELS[statusKey] || STATUS_LABELS.pending;
   const statusLabel = t(`status.${statusKey}`) || statusInfo.label;
@@ -111,10 +111,10 @@ export const OrderCard = ({ order, showDriverAmount = false, onClick }: OrderCar
       {/* تذييل البطاقة */}
       <div className="flex items-center justify-between mt-3 pt-3" style={{ borderTop: '1px solid hsl(20 20% 100% / 0.05)' }}>
         <span className="text-xs text-muted-foreground">
-          {new Date(order.created_at).toLocaleDateString('ar-BH')}
+          {new Date(order.created_at).toLocaleDateString(i18n.language === 'ar' ? 'ar-BH' : 'en-GB')}
         </span>
         <div className="flex items-center gap-1.5">
-          <span className="text-xs text-muted-foreground">المبلغ</span>
+          <span className="text-xs text-muted-foreground">{t('common.amount')}</span>
           <span
             className="font-black text-sm"
             style={{ color: 'hsl(22 100% 62%)' }}

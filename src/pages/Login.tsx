@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import { CarLogo } from '@/components/CarLogo';
+import { LanguageToggle } from '@/components/LanguageToggle';
 
 const Login = () => {
   const [phone, setPhone] = useState('');
@@ -28,6 +29,9 @@ const Login = () => {
   return (
     <div className="app-container flex flex-col min-h-screen overflow-hidden">
       <div className="page-glow" />
+      <div className="absolute top-4 left-4 z-20">
+        <LanguageToggle />
+      </div>
 
       {/* قسم الشعار */}
       <div className="flex-1 flex flex-col justify-center px-6 relative z-10">
@@ -55,7 +59,7 @@ const Login = () => {
             >
               مندوبي
             </h1>
-            <p className="text-muted-foreground text-sm font-medium">توصيل ذكي في البحرين</p>
+            <p className="text-muted-foreground text-sm font-medium">{t('common.tagline')}</p>
           </div>
         </div>
 

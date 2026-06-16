@@ -23,7 +23,7 @@ const ChatScreen = () => {
   const { orderId } = useParams<{ orderId: string }>();
   const { user, profile } = useAuth();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [messages, setMessages] = useState<Message[]>([]);
   const [text, setText] = useState('');
   const [isRecording, setIsRecording] = useState(false);
@@ -256,7 +256,7 @@ const ChatScreen = () => {
                 )}
               </div>
               <span className="text-[10px] text-muted-foreground mt-1">
-                {new Date(msg.created_at).toLocaleTimeString('ar-BH', { hour: '2-digit', minute: '2-digit' })}
+                {new Date(msg.created_at).toLocaleTimeString(i18n.language === 'ar' ? 'ar-BH' : 'en-GB', { hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
           );

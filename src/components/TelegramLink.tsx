@@ -3,10 +3,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 
 const TelegramLink = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [code, setCode] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -18,7 +20,7 @@ const TelegramLink = () => {
       p_user_id: user.id,
     });
     if (error || !data) {
-      toast({ title: 'فشل توليد الكود', variant: 'destructive' });
+      toast({ title: t('telegram.generateFailed'), variant: 'destructive' });
     } else {
       setCode(data);
     }
@@ -36,37 +38,37 @@ const TelegramLink = () => {
     <div className="bg-card rounded-2xl border border-border p-4 space-y-3">
       <div className="flex items-center gap-2">
         <span className="text-xl">✈️</span>
-        <h3 className="font-bold">ربط بوت تلغرام</h3>
+        <h3 className="font-bold">{t('telegram.linkBot')}</h3>
       </div>
 
       {!code ? (
         <>
           <p className="text-sm text-muted-foreground">
-            اربط حسابك ببوت تلغرام لاستلام الإشعارات وإنشاء الطلبات من تلغرام مباشرة.
+            {t('telegram.linkDesc')}
           </p>
           <Button onClick={generateCode} disabled={loading} className="w-full h-11 rounded-xl" variant="outline">
-            {loading ? '⏳ جاري التوليد...' : '🔗 توليد رمز الربط'}
+            {loading ? t('telegram.generating') : t('telegram.generateCode')}
           </Button>
         </>
       ) : (
         <>
           <p className="text-sm text-muted-foreground">
-            افتح البوت في تلغرام واكتب الأمر التالي (صالح لمدة 10 دقائق):
+            {t('telegram.openBotInstructions')}
           </p>
           <div className="bg-muted rounded-xl p-4 text-center">
-            <p className="text-xs text-muted-foreground mb-1">أرسل هذا الكود في البوت</p>
+            <p className="text-xs text-muted-foreground mb-1">{t('telegram.sendCodeInBot')}</p>
             <p className="text-3xl font-bold tracking-widest text-primary font-mono">{code}</p>
           </div>
           <div className="flex gap-2">
             <Button onClick={copyCode} className="flex-1 h-11 rounded-xl" variant="outline">
-              {copied ? '✅ تم النسخ' : '📋 نسخ الكود'}
+              {copied ? t('telegram.copied') : t('telegram.copyCode')}
             </Button>
             <Button onClick={generateCode} disabled={loading} className="h-11 rounded-xl px-4" variant="ghost">
               🔄
             </Button>
           </div>
           <p className="text-xs text-muted-foreground text-center">
-            ⚠️ لا تشارك هذا الكود مع أحد
+            {t('telegram.dontShareCode')}
           </p>
         </>
       )}

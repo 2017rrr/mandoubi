@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
+import { LanguageToggle } from '@/components/LanguageToggle';
 
 const Register = () => {
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
@@ -53,6 +54,9 @@ const Register = () => {
     <div className="app-container flex flex-col min-h-screen">
       <div className="absolute inset-x-0 top-0 h-64 pointer-events-none"
         style={{ background: 'radial-gradient(ellipse at 50% -20%, hsl(24 94% 55% / 0.15) 0%, transparent 70%)' }} />
+      <div className="absolute top-4 left-4 z-20">
+        <LanguageToggle />
+      </div>
 
       <div className="flex-1 flex flex-col items-center justify-center px-6 relative z-10">
         <div className="mb-10 text-center space-y-3">

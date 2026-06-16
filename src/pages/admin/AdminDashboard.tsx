@@ -440,7 +440,7 @@ const AdminUsers = () => {
 };
 
 const AdminPayments = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [orders, setOrders] = useState<any[]>([]);
   const [receiptUrls, setReceiptUrls] = useState<Record<string, string>>({});
   const { toast } = useToast();
@@ -487,9 +487,9 @@ const AdminPayments = () => {
   };
 
   const paymentStatusBadge = (status: string) => {
-    if (status === 'confirmed') return <span className="text-xs px-2 py-0.5 rounded-full bg-success/20 text-success font-medium">✅ مؤكد</span>;
-    if (status === 'rejected') return <span className="text-xs px-2 py-0.5 rounded-full bg-destructive/20 text-destructive font-medium">❌ مرفوض</span>;
-    if (status === 'submitted') return <span className="text-xs px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-500 font-medium">⏳ بانتظار</span>;
+    if (status === 'confirmed') return <span className="text-xs px-2 py-0.5 rounded-full bg-success/20 text-success font-medium">{t('admin.paymentStatusConfirmed')}</span>;
+    if (status === 'rejected') return <span className="text-xs px-2 py-0.5 rounded-full bg-destructive/20 text-destructive font-medium">{t('admin.paymentStatusRejected')}</span>;
+    if (status === 'submitted') return <span className="text-xs px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-500 font-medium">{t('admin.paymentStatusSubmitted')}</span>;
     return <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground font-medium">{status}</span>;
   };
 
@@ -514,20 +514,20 @@ const AdminPayments = () => {
 
               {/* رقم هاتف صاحب المحل */}
               <div className="flex items-center gap-2 text-sm">
-                <span className="text-muted-foreground">📞 صاحب المحل:</span>
+                <span className="text-muted-foreground">{t('admin.storeOwner')}</span>
                 <a href={`tel:${storePhone}`} className="text-primary font-medium" dir="ltr">{storePhone}</a>
               </div>
 
               {/* نوع التوصيل والتاريخ */}
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span>{t('common.standard')}</span>
-                <span>{new Date(o.created_at).toLocaleString('ar-BH')}</span>
+                <span>{new Date(o.created_at).toLocaleString(i18n.language === 'ar' ? 'ar-BH' : 'en-GB')}</span>
               </div>
 
               {/* صورة الإيصال مباشرة */}
               {receiptUrls[o.id] && (
                 <div className="space-y-2">
-                  <p className="text-xs text-muted-foreground font-medium">صورة الإيصال:</p>
+                  <p className="text-xs text-muted-foreground font-medium">{t('admin.receiptImage')}</p>
                   <img
                     src={receiptUrls[o.id]}
                     alt="إيصال"
